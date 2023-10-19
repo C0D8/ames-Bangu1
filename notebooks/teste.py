@@ -51,26 +51,31 @@ clean_data_path = DATA_DIR / 'processed' / 'ames_clean.pkl'
 
 
 with open(clean_data_path, 'rb') as file:
-    data = pickle.load(file)
+    data_ames = pickle.load(file)
 
 # read a json file and transform it into a dataframe
 
-# with open('testee.json') as json_file:
-#     data = json.load(json_file)
+with open('testee.json') as json_file:
+    data = json.load(json_file)
 
-# data = pd.DataFrame(data, index=[0])
 
-# print(data)
+data = pd.DataFrame(data, index=[0])
 
-model_data = data.copy()
+
+data_ames2 = data_ames.copy()
+
+data_ames2 = pd.concat([data_ames2, data], ignore_index=False)
+
+
+model_data = data_ames2.copy()
 
 for col in ordinal_columns:
-    codes, _ = pd.factorize(data[col], sort=True)
+    codes, _ = pd.factorize(data_ames2[col], sort=True)
     model_data[col] = codes
-
 
 model_data = pd.get_dummies(model_data, drop_first=True)
 
+print(model_data.info())
 for cat in categorical_columns:
     dummies = []
     for col in model_data.columns:
@@ -82,9 +87,14 @@ for cat in categorical_columns:
 modelo_carregado = joblib.load("regression_model.joblib")
 
 
+
+
+model_data = model_data.iloc[-1]
 print(model_data)
+
+model_data = model_data.drop('SalePrice')
+
 # model_data = model_data.drop('SalePrice')
 prediction = modelo_carregado.predict(model_data.to_numpy().reshape(1, -1))
-
 
 print(prediction)
