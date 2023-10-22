@@ -47,8 +47,6 @@ print(DATA_DIR)
 
 clean_data_path = DATA_DIR / 'processed' / 'ames_clean.pkl'
 
-modelo_carregado = joblib.load("regression_model.joblib")
-
 @app.route('/predict', methods=['POST'])
 def predict():
 
@@ -83,7 +81,7 @@ def predict():
             dummies_str = ', '.join(dummies)
             print(f'From column "{cat}" we made {dummies_str}\n')
 
-        modelo_carregado = joblib.load("regression_model.joblib")
+        modelo_carregado = joblib.load("notebooks/regression_model.joblib")
         model_data = model_data.iloc[-1]
         print(model_data)
 
